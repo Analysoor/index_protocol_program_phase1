@@ -1,0 +1,499 @@
+{
+  "version": "0.1.0",
+  "name": "index_protocol_program",
+  "instructions": [
+    {
+      "name": "initializeIndexProtocolState",
+      "accounts": [
+        {
+          "name": "superAuthority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "indexProtocolState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The system program account"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "counter",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "updateIndexProtocolState",
+      "accounts": [
+        {
+          "name": "superAuthority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "indexProtocolState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The system program account"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "newSuperAuthority",
+          "type": {
+            "option": "publicKey"
+          }
+        },
+        {
+          "name": "isPaused",
+          "type": {
+            "option": "bool"
+          }
+        },
+        {
+          "name": "isOpen",
+          "type": {
+            "option": "bool"
+          }
+        }
+      ]
+    },
+    {
+      "name": "deployMintConfig",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "indexProtocolState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mintDataConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The system program account"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "config",
+          "type": {
+            "defined": "Config"
+          }
+        },
+        {
+          "name": "fundsRecipient",
+          "type": "publicKey"
+        },
+        {
+          "name": "splTokenName",
+          "type": "string"
+        },
+        {
+          "name": "mintType",
+          "type": {
+            "defined": "MintType"
+          }
+        },
+        {
+          "name": "mintPhase",
+          "type": {
+            "defined": "MintPhase"
+          }
+        }
+      ]
+    },
+    {
+      "name": "mint",
+      "accounts": [
+        {
+          "name": "feePayer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "indexProtocolState",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintDataConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "minterState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "burnableMint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "any mint that would be burnt later on."
+          ]
+        },
+        {
+          "name": "burnableMintAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "splTokenProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The SPL token program account"
+          ]
+        },
+        {
+          "name": "fundsRecipient",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The system program account"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "tick",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "updateMintConfig",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "indexProtocolState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mintDataConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The system program account"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "newAuthority",
+          "type": {
+            "option": "publicKey"
+          }
+        },
+        {
+          "name": "mintPhase",
+          "type": {
+            "option": {
+              "defined": "MintPhase"
+            }
+          }
+        },
+        {
+          "name": "newPrice",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "newStartDate",
+          "type": {
+            "option": "u64"
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "IndexProtocolState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "superAuthority",
+            "type": "publicKey"
+          },
+          {
+            "name": "isPaused",
+            "type": "bool"
+          },
+          {
+            "name": "isOpen",
+            "docs": [
+              "anyone can deploy if below is true"
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "counter",
+            "type": "u64"
+          },
+          {
+            "name": "reserved",
+            "type": {
+              "array": [
+                "u8",
+                64
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "MintDataConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "distributor",
+            "type": "publicKey"
+          },
+          {
+            "name": "fundsRecipient",
+            "type": "publicKey"
+          },
+          {
+            "name": "splTokenName",
+            "type": "string"
+          },
+          {
+            "name": "mintType",
+            "type": {
+              "defined": "MintType"
+            }
+          },
+          {
+            "name": "mintPhase",
+            "type": {
+              "defined": "MintPhase"
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "config",
+            "type": {
+              "defined": "Config"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "MinterState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "burntMints",
+            "type": {
+              "vec": "publicKey"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "Config",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "price",
+            "type": "u64"
+          },
+          {
+            "name": "amountPerMint",
+            "type": "u64"
+          },
+          {
+            "name": "startDate",
+            "type": "u64"
+          },
+          {
+            "name": "counter",
+            "type": "u64"
+          },
+          {
+            "name": "supply",
+            "type": "u64"
+          },
+          {
+            "name": "tick",
+            "type": "string"
+          },
+          {
+            "name": "liquidityBootstrapping",
+            "type": "bool"
+          },
+          {
+            "name": "filter",
+            "type": {
+              "vec": "string"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "MintType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "SplToken"
+          },
+          {
+            "name": "Nft"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MintPhase",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uninitialized"
+          },
+          {
+            "name": "Minting"
+          },
+          {
+            "name": "Paused"
+          },
+          {
+            "name": "Distributing"
+          },
+          {
+            "name": "Claiming"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "PublicKeyMismatch",
+      "msg": "PublicKeyMismatch"
+    },
+    {
+      "code": 6001,
+      "name": "Uninitialized",
+      "msg": "Account is not initialized!"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidSeed",
+      "msg": "Invalid hash name seed length"
+    },
+    {
+      "code": 6003,
+      "name": "TokenNameTooLong",
+      "msg": "Token Name too long"
+    },
+    {
+      "code": 6004,
+      "name": "IndexProtocolIsPaused",
+      "msg": "Protocol is paused"
+    },
+    {
+      "code": 6005,
+      "name": "StartDateInvalid",
+      "msg": "Start Date cannot be in the past."
+    },
+    {
+      "code": 6006,
+      "name": "SupplyTooLow",
+      "msg": "Max supply cannot be 0."
+    },
+    {
+      "code": 6007,
+      "name": "TickNotLowercased",
+      "msg": "Tick is not lowercased."
+    },
+    {
+      "code": 6008,
+      "name": "TickInvalid",
+      "msg": "Tick is not 4 character in length"
+    },
+    {
+      "code": 6009,
+      "name": "MintHasNotStarted",
+      "msg": "Start date did not reach yet."
+    },
+    {
+      "code": 6010,
+      "name": "MaxSupplyHasReached",
+      "msg": "Cannot mint more max supply has reached."
+    },
+    {
+      "code": 6011,
+      "name": "WrongAccountOwner",
+      "msg": "Wrong account owner."
+    }
+  ],
+  "metadata": {
+    "address": "indxL6jiTVfJL48JFdRu7Bz4WKXBQX1otGgvnvpsaPE"
+  }
+}
