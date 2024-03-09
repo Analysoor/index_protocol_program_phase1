@@ -1,0 +1,15 @@
+[features]
+seeds = false
+skip-lint = false
+[programs.mainnet]
+index_protocol_program = "indxL6jiTVfJL48JFdRu7Bz4WKXBQX1otGgvnvpsaPE"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "mainnet"
+wallet = ""
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
