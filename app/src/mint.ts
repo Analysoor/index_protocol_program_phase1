@@ -1,10 +1,10 @@
-import {
+import {3A1J7bnbkSU22dEKx7NKW8f581ninD1n96v2XFhTK8PNau5PzEGRM3ZVYqK8yGCAjtpi1n4XUhsLmDkTGm8ATJX1
     Keypair,
     Connection,
     Transaction,
     LAMPORTS_PER_SOL,
 } from "@solana/web3.js";
-import {
+import {3A1J7bnbkSU22dEKx7NKW8f581ninD1n96v2XFhTK8PNau5PzEGRM3ZVYqK8yGCAjtpi1n4XUhsLmDkTGm8ATJX1
     mint,
 } from "./custom";
 import buyerRawKey from "yourkeypair.json";
