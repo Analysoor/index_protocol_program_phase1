@@ -3,8 +3,10 @@ import {
     Connection,
     Transaction,
     LAMPORTS_PER_SOL,
+    ComputeBudgetProgram,
 } from "@solana/web3.js";
 import {
+    closeMinterStatesInstruction,
     deploy,
     intializeIndexProtocolState,
     mint,
@@ -13,7 +15,13 @@ import {
 import superAuthorityRawKey from "supauth.json";
 import buyerRawKey from "buyer.json";
 import { findIndexProtocolState, findMinterState } from "./pda";
-import { IndexProtocolState, MintType, MinterState } from "./generated";
+import {
+    IndexProtocolState,
+    MintType,
+    MinterState,
+    PROGRAM_ID,
+    minterStateDiscriminator,
+} from "./generated";
 
 const connection = new Connection("", "confirmed");
 
@@ -43,7 +51,6 @@ async function checkProtocolState() {
     console.log(indexProtocolStateData.pretty());
 }
 
-
 async function uptadeProtocolState() {
     const instructions = updateIndexProtocolState(
         superAuthority.publicKey,
@@ -51,10 +58,9 @@ async function uptadeProtocolState() {
         true,
         false,
     );
-    
+
     const txn = new Transaction().add(...instructions);
     const txn_id = await connection.sendTransaction(txn, [superAuthority]);
-
 
     console.log(`https://solscan.io/tx/${txn_id}`);
     console.log(`${txn_id}`);
@@ -63,7 +69,7 @@ async function uptadeProtocolState() {
 async function deployMint() {
     const currentTimeInSeconds = Math.floor(new Date().getTime() / 1000);
     console.log(currentTimeInSeconds);
-    const startDate = currentTimeInSeconds +60;
+    const startDate = currentTimeInSeconds + 60;
     const instructions = await deploy(
         connection,
         superAuthority.publicKey,
@@ -80,13 +86,9 @@ async function deployMint() {
     const txn = new Transaction().add(...instructions);
     const txn_id = await connection.sendTransaction(txn, [superAuthority]);
 
-
     console.log(`https://solscan.io/tx/${txn_id}`);
     console.log(`${txn_id}`);
 }
-
-
-
 
 async function runMint() {
     const burnableMint = Keypair.generate();
@@ -103,12 +105,46 @@ async function runMint() {
 }
 
 async function getMintState() {
-
-    const [minterState] = findMinterState(buyer.publicKey, "zero")
-    const minterStateData = await MinterState.fromAccountAddress(connection, minterState);
-    console.log(minterStateData.pretty())
+    const [minterState] = findMinterState(buyer.publicKey, "zero");
+    const minterStateData = await MinterState.fromAccountAddress(
+        connection,
+        minterState,
+    );
+    console.log(minterStateData.pretty());
 }
 
+async function closeMinterStates() {
+    const filters: any = [
+        {
+            memcmp: {
+                offset: 0,
+                bytes: minterStateDiscriminator,
+            },
+        },
+    ];
+
+    const allMinterStates = await connection.getProgramAccounts(PROGRAM_ID, {
+        filters,
+    });
+    const minterStatesPubkeys = allMinterStates.map(
+        (minterState) => minterState.pubkey,
+    );
+    // console.log(minterStatesPubkeys)
+
+    let instructions = closeMinterStatesInstruction(
+        superAuthority.publicKey,
+        minterStatesPubkeys,
+    );
+
+    // priority fees
+    const computeBudgetFees = ComputeBudgetProgram.setComputeUnitPrice({
+        microLamports: 500_000,
+    });
+    instructions = [computeBudgetFees, ...instructions];
+    const txn = new Transaction().add(...instructions);
+    const txn_id = await connection.sendTransaction(txn, [superAuthority]);
+    console.log(`https://solscan.io/tx/${txn_id}?cluster=devnet`);
+}
 
 // intiProtocol()
 //checkProtocolState()

@@ -59,4 +59,9 @@ pub mod index_protocol_program {
     ) -> Result<()> {
         handle_update_mint_config(ctx, new_authority, mint_phase, new_price, new_start_date)
     }
+    
+    pub fn close_minter_states<'info>(
+        ctx: Context<'_, '_, '_, 'info, CloseMinterStates<'info>>) -> Result<()> {
+        handle_close_minter_states(ctx)
+    }
 }

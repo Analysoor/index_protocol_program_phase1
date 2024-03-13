@@ -178,5 +178,12 @@ pub fn handle_mint(ctx: Context<Mint>) -> Result<()> {
         minter_state.burnt_mints.push(burnable_mint.key())
     }
 
+    // Check if the counter is greater than the max supply
+    if minter_state.burnt_mints.len() as u64 > mint_data_config.config.amount_per_mint {
+        msg!("Minter has exceeded their allowed limit.");
+        return err!(IndexProtocolProgramError::MinterLimitReached);
+    }
+
+
     Ok(())
 }

@@ -38,4 +38,7 @@ pub enum IndexProtocolProgramError {
     // 6011
     #[msg("Wrong account owner.")]
     WrongAccountOwner,
+    // 6012
+    #[msg("Minter limit reached.")]
+    MinterLimitReached,
 }

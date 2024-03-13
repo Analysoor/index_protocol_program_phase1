@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.1",
   "name": "index_protocol_program",
   "instructions": [
     {
@@ -250,6 +250,30 @@
           }
         }
       ]
+    },
+    {
+      "name": "closeMinterStates",
+      "accounts": [
+        {
+          "name": "superAuthority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "indexProtocolState",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The system program account"
+          ]
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [

@@ -2,10 +2,8 @@ use crate::{errors::*, id, TOKEN_PROGRAM};
 use anchor_lang::{
     prelude::*,
     solana_program::{
-        program::invoke_signed, program_memory::sol_memcmp, pubkey::PUBKEY_BYTES,
-        program_pack::{IsInitialized, Pack},
-        system_instruction::create_account, sysvar::instructions::get_instruction_relative,
-    },
+        program::invoke_signed, program_memory::sol_memcmp, program_pack::{IsInitialized, Pack}, pubkey::PUBKEY_BYTES, system_instruction::create_account, sysvar::instructions::get_instruction_relative
+    }, system_program,
 };
 use anchor_spl::{token::spl_token::state::Account, associated_token::get_associated_token_address};
 
@@ -93,4 +91,19 @@ pub fn assert_is_ata(ata: &AccountInfo, wallet: &Pubkey, mint: &Pubkey) -> Resul
     assert_keys_equal(ata_account.mint, *mint)?;
     assert_keys_equal(get_associated_token_address(wallet, mint), *ata.key)?;
     Ok(ata_account)
+}
+
+
+pub fn close_account<'info>(
+    info: &AccountInfo<'info>,
+    sol_destination: &AccountInfo<'info>,
+) -> Result<()> {
+    // Transfer tokens from the account to the sol_destination.
+    let dest_starting_lamports = sol_destination.lamports();
+    **sol_destination.lamports.borrow_mut() =
+        dest_starting_lamports.checked_add(info.lamports()).unwrap();
+    **info.lamports.borrow_mut() = 0;
+
+    info.assign(&system_program::ID);
+    info.realloc(0, false).map_err(Into::into)
 }

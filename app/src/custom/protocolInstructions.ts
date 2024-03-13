@@ -46,8 +46,8 @@ export async function deploy(
 ) {
     const [indexProtocolState] = findIndexProtocolState();
     const [mintDataConfig] = findMintDataConfig(tick);
-    console.log(mintDataConfig)
-    console.log(indexProtocolState)
+    console.log(mintDataConfig);
+    console.log(indexProtocolState);
 
     // get current counter and 1 to it
     const indexProtocolStateData = await IndexProtocolState.fromAccountAddress(
